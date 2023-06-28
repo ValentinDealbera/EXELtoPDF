@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Project Title</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+  <!-- <link rel="stylesheet" href="styles.css"> Add your custom CSS file -->
+</head>
+<body>
+  <header>
+    Excel to PDF converter
+  </header>
+  <main>
+    <form id="pdfForm">
+      <input type="file" name="PDF" />
+      <button type="submit" class="btn">Submit</button>
+    </form>
+  </main>
+  <script>
+    const form = document.getElementById('pdfForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent default form submission behavior
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await axios.post('http://localhost:3001/convert', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          },
+        });
+      } catch (error) {
+        console.error(error); // Handle any errors that occurred during the request
+      }
+    });
+  </script> <!-- Add your custom JavaScript file -->
+</body>
+</html>
