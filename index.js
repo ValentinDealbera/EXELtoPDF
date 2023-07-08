@@ -133,7 +133,6 @@ server.post("/convert", upload.single('PDF'), async (req, res) => {
     const zipFileName = 'boletas.zip'
     const arr = [];
     const files = req.file;
-    // const data = await readExcel("pdf example.xlsx");
     const data = await readExcel(files.path, { schema: null });
     const formatData = data.filter((_, index) => index >= 3);
     const dataToPrint = formatData.map((e) => {
@@ -150,10 +149,10 @@ server.post("/convert", upload.single('PDF'), async (req, res) => {
       return obj;
     });
 
-    const outputZipPath = path.resolve(__dirname, 'temp', zipFileName);
+    const outputZipPath = path.resolve(__dirname, 'zips', zipFileName);
         const outputZipStream = fs.createWriteStream(outputZipPath);
         const archive = archiver('zip', {
-          zlib: { level: 9 } // Compression level
+          zlib: { level: 9 }
         });
     
         outputZipStream.on('close', () => {
@@ -166,7 +165,6 @@ server.post("/convert", upload.single('PDF'), async (req, res) => {
               res.sendStatus(500);
             }
     
-            // Cleanup: Delete the temporary zip file
             fs.unlink(outputZipPath, (unlinkErr) => {
               if (unlinkErr) {
                 console.error('An error occurred while deleting the temporary zip file:', unlinkErr);
@@ -192,74 +190,6 @@ server.post("/convert", upload.single('PDF'), async (req, res) => {
     res.sendStatus(500).json({error: error.message});
   }
 });
-
-
-// server.post("/convert", upload.single('PDF'), async (req, res) => {
-//   const zipFileName = 'boletas.zip'; // Replace 'boletas' with the desired name
-//   try {
-//     const arr = [];
-//     const files = req.file;
-//     const data = await readExcel(files.path, { schema: null });
-//     let user = {};
-//     for (let i in data) {
-//       user = {
-//         nombre: data[i][0],
-//         apellido: data[i][1],
-//         sueldoBruto: data[i][2],
-//         dni: data[i][3],
-//         cuil: data[i][4],
-//         email: data[i][5],
-//       };
-//       fillPDFTemplate('Template.pdf', user);
-//       const filePath = path.resolve(__dirname, 'output', `${user.nombre}_${user.apellido}_${user.dni}.pdf`);
-//       arr.push(filePath);
-//       for (let j in data[i]) {
-//       }
-//     }
-
-//     const outputZipPath = path.resolve(__dirname, 'temp', zipFileName);
-//     const outputZipStream = fs.createWriteStream(outputZipPath);
-//     const archive = archiver('zip', {
-//       zlib: { level: 9 } // Compression level
-//     });
-
-//     outputZipStream.on('close', () => {
-//       console.log('Zip file created successfully');
-//       res.setHeader('Content-Disposition', `attachment; filename=${zipFileName}`);
-//       res.setHeader('Content-Type', 'application/zip');
-//       res.download(outputZipPath, zipFileName, (err) => {
-//         if (err) {
-//           console.error('An error occurred while sending the zip file:', err);
-//           res.sendStatus(500);
-//         }
-
-//         // Cleanup: Delete the temporary zip file
-//         fs.unlink(outputZipPath, (unlinkErr) => {
-//           if (unlinkErr) {
-//             console.error('An error occurred while deleting the temporary zip file:', unlinkErr);
-//           }
-//         });
-//       });
-//     });
-
-//     archive.on('error', (err) => {
-//       console.error('An error occurred while creating the zip file:', err);
-//       res.sendStatus(500);
-//     });
-
-//     archive.pipe(outputZipStream);
-
-//     arr.forEach((filePath) => {
-//       archive.file(filePath, { name: path.basename(filePath) });
-//     });
-
-//     archive.finalize();
-//   } catch (error) {
-//     console.log("An error occurred:", error);
-//     res.sendStatus(500).end();
-//   }
-// });
-
 
 server.listen(3001, () => {
   console.log("Server up on port 3001");
