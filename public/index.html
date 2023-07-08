@@ -21,19 +21,30 @@
     const form = document.getElementById('pdfForm');
     form.addEventListener('submit', async (e) => {
       e.preventDefault(); // Prevent default form submission behavior
-
+  
       const formData = new FormData(form);
-
+  
       try {
         const response = await axios.post('http://localhost:3001/convert', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           },
+          responseType: 'blob' // Set the response type to 'blob'
         });
+  
+        // Create a temporary anchor element to trigger the file download
+        const downloadLink = document.createElement('a');
+        const blobUrl = window.URL.createObjectURL(response.data); // Create a URL for the blob data
+        downloadLink.href = blobUrl;
+        downloadLink.download = 'boletas.zip'; // Set the desired file name
+        downloadLink.click(); // Trigger the download
+  
+        // Clean up: Revoke the blob URL after the download
+        window.URL.revokeObjectURL(blobUrl);
       } catch (error) {
         console.error(error); // Handle any errors that occurred during the request
       }
     });
-  </script> <!-- Add your custom JavaScript file -->
+  </script>
 </body>
 </html>
