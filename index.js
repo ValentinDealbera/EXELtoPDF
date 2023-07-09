@@ -188,7 +188,7 @@ server.post("/convert", upload.single('PDF'), async (req, res) => {
       archive.finalize();
     };
 
-    setTimeout(createZipFile, 3000); // Delay of 3 seconds (3000 milliseconds)
+    setTimeout(createZipFile, 4000); // Delay of 3 seconds (3000 milliseconds)
 
   } catch (error) {
     console.log("An error occurred:", error);
